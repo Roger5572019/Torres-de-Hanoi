@@ -1,0 +1,40 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "Compilador de C con Allegro",
+			"command": "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g",
+				"${workspaceFolder}/main.cpp", 
+				"-o",
+				"${workspaceFolder}/app.exe",
+				"-LC:/msys64/ucrt64/lib", 
+				"-lallegro", 
+				"-lallegro_font"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+                "kind": "build",
+                "isDefault": true
+            },
+			"detail": "compiler: C:\\msys64\\ucrt64\\bin\\gcc.exe"
+		},
+		{
+            "label": "Ejecutar app.exe",
+            "type": "shell",
+            "command": "${workspaceFolder}/app.exe",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+	]
+}
