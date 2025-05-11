@@ -8,12 +8,18 @@
 			"args": [
 				"-fdiagnostics-color=always",
 				"-g",
-				"${workspaceFolder}/main.cpp", 
+				"${workspaceFolder}/main.cpp",
 				"-o",
 				"${workspaceFolder}/app.exe",
-				"-LC:/msys64/ucrt64/lib", 
-				"-lallegro", 
-				"-lallegro_font"
+				"-LC:/msys64/ucrt64/lib",
+				"-lallegro",
+				"-lallegro_main",
+				"-lallegro_font",
+				"-lallegro_ttf",
+				"-lallegro_image",
+				"-lallegro_primitives",
+				"-lallegro_audio",
+				"-lallegro_acodec"
 			],
 			"options": {
 				"cwd": "${fileDirname}"
@@ -22,19 +28,19 @@
 				"$gcc"
 			],
 			"group": {
-                "kind": "build",
-                "isDefault": true
-            },
+				"kind": "build",
+				"isDefault": true
+			},
 			"detail": "compiler: C:\\msys64\\ucrt64\\bin\\gcc.exe"
 		},
 		{
-            "label": "Ejecutar app.exe",
-            "type": "shell",
-            "command": "${workspaceFolder}/app.exe",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        }
+			"label": "Ejecutar app.exe",
+			"type": "shell",
+			"command": "${workspaceFolder}/app.exe",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
 	]
 }
