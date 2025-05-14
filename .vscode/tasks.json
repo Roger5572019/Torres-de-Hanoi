@@ -4,11 +4,13 @@
 		{
 			"type": "cppbuild",
 			"label": "Compilador de C con Allegro",
-			"command": "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+			"command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
 			"args": [
 				"-fdiagnostics-color=always",
+				 "-I", "${workspaceFolder}/entidades",
 				"-g",
 				"${workspaceFolder}/main.cpp",
+				"${workspaceFolder}/entidades/ficha/ficha.cpp",
 				"-o",
 				"${workspaceFolder}/app.exe",
 				"-LC:/msys64/ucrt64/lib",
@@ -31,7 +33,7 @@
 				"kind": "build",
 				"isDefault": true
 			},
-			"detail": "compiler: C:\\msys64\\ucrt64\\bin\\gcc.exe"
+			"detail": "compiler: C:\\msys64\\ucrt64\\bin\\g++.exe"
 		},
 		{
 			"label": "Ejecutar app.exe",

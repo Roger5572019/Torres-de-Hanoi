@@ -1,3 +1,6 @@
 {
-    "cmake.sourceDirectory": "C:/Users/roger/Documents/UAA/Apps/C++/ProyectoFinal/allegro5/addons/audio"
+    "cmake.sourceDirectory": "C:/Users/roger/Documents/UAA/Apps/C++/ProyectoFinal/allegro5/addons/audio",
+    "files.associations": {
+        "iostream": "cpp"
+    }
 }

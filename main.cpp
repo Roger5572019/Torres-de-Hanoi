@@ -1,11 +1,14 @@
 #include <allegro5/allegro5.h>
+#include "entidades/ficha/ficha.hpp"
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_primitives.h>
 #include <iostream>
 using namespace std;
+
 int const SIZE_W = 800;
 int const SIZE_H = 800;
+
 struct BOUNCER
 {
     float x, y;
@@ -15,9 +18,10 @@ struct BOUNCER
 
 int main()
 {
+    int fichas = 0;
     // Inicializar librería principal de Allegro
     al_init();
-    // Inicializar teclado
+    // Inicializar tecladoFichasFichas
     al_install_keyboard();
     // Inicializar addons de fuentes
     al_init_font_addon();
@@ -34,9 +38,10 @@ int main()
     // Crear pantalla
     ALLEGRO_DISPLAY *disp = al_create_display(SIZE_W, SIZE_H);
     // Crear temporizador para controlar los FPS (30 FPS en este caso)
+
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / 60.0);
     // Cargar fuente
-    ALLEGRO_FONT *font = al_load_font("arial.ttf", 24, 0);
+    ALLEGRO_FONT *font = al_load_font("fuentes\\arial.ttf", 24, 0);
     if (!font)
     {
         printf("Error: no se pudo cargar la fuente.\n");
@@ -60,8 +65,13 @@ int main()
     objHolaMundo.y = 0;
     int w = al_get_text_width(font, "Hello world!");
     int h = al_get_font_line_height(font);
+    cout << "Fichas: ";
+    cin >> fichas;
+    cin.ignore();
+    cin.clear();
     while (1)
     {
+
         // Esperar evento
         al_wait_for_event(queue, &event);
 
@@ -105,11 +115,7 @@ int main()
             // Dibujar texto en color blanco con movimiento
             al_draw_text(font, al_map_rgb(255, 255, 255), b->x, b->y, 0, "Hello world!");
             // Dibujar figuras
-            al_draw_filled_triangle(35, 350, 85, 375, 35, 400, al_map_rgb_f(0, 1, 0));
-            al_draw_filled_rectangle(240, 260, 340, 340, al_map_rgba_f(0, 0, 0.5, 0.5));
-            al_draw_circle(450, 370, 30, al_map_rgb_f(1, 0, 1), 2);
-            al_draw_line(440, 110, 460, 210, al_map_rgb_f(1, 0, 0), 1);
-            al_draw_line(500, 220, 570, 200, al_map_rgb_f(1, 1, 0), 1);
+            renderizarFichas(fichas, 10);
             // Mostrar lo que se dibujó
             al_flip_display();
 
