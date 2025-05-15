@@ -11,6 +11,8 @@
 				"-g",
 				"${workspaceFolder}/main.cpp",
 				"${workspaceFolder}/entidades/ficha/ficha.cpp",
+				"${workspaceFolder}/entidades/ficha/alambre.cpp",
+
 				"-o",
 				"${workspaceFolder}/app.exe",
 				"-LC:/msys64/ucrt64/lib",

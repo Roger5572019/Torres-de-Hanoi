@@ -1,9 +1,11 @@
 #include <allegro5/allegro5.h>
 #include "entidades/ficha/ficha.hpp"
+#include "entidades/ficha/alambre.hpp"
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_primitives.h>
 #include <iostream>
+
 using namespace std;
 
 int const SIZE_W = 800;
@@ -114,8 +116,10 @@ int main()
             }
             // Dibujar texto en color blanco con movimiento
             al_draw_text(font, al_map_rgb(255, 255, 255), b->x, b->y, 0, "Hello world!");
-            // Dibujar figuras
-            renderizarFichas(fichas, 10);
+            // Dibujar Alambres
+            renderizarAlambres(3);
+            // Dibujar Fichas
+            renderizarFichas(fichas, 100);
             // Mostrar lo que se dibujó
             al_flip_display();
 

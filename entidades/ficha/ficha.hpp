@@ -1,6 +1,6 @@
 #pragma once
 
-enum Color {AMARILLO, ROJO, AZUL, VERDE, MORADO, ROSA};
+enum Color {ROJO = 0, NARANJA = 1, AMARILLO = 2, VERDE = 3, AZUL = 4, MORADO = 5, ROSA = 6};
 
 struct Ficha
 {
@@ -10,3 +10,4 @@ struct Ficha
 };
 
 void renderizarFichas(int , float);
+ALLEGRO_COLOR obtenerColor(Color);
