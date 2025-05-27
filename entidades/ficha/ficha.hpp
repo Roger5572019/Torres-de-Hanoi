@@ -6,6 +6,7 @@ struct Ficha
 {
     float x, y;
     float width, height;
+    int numeroFicha;
     Color color;
 };
 

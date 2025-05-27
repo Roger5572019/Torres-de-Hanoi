@@ -119,7 +119,7 @@ int main()
             // Dibujar Alambres
             renderizarAlambres(3);
             // Dibujar Fichas
-            renderizarFichas(fichas, 100);
+            renderizarFichas(fichas, 220);
             // Mostrar lo que se dibujó
             al_flip_display();
 

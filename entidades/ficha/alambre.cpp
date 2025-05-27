@@ -4,11 +4,12 @@
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_primitives.h>
 
-void renderizarAlambres(int num){
+void renderizarAlambres(int num)
+{
     Alambre alambres[num];
     int ancho = 10;
-    int alto = 100;
-    float centroX = 300;
+    int alto = 220;
+    float centroX = 100;
     float x_inicial;
 
     for (int i = 0; i < num; i++)
@@ -21,14 +22,15 @@ void renderizarAlambres(int num){
         x_inicial = centroX - (ancho / 2);
 
         // Posición Y base
-        alambresI->y = 400;
+        alambresI->y = 100;
+        alambres->x = x_inicial;
         // Dibuja el alambre (como torre)
         al_draw_filled_rounded_rectangle(
-            x_inicial, alambresI->y - alto, // parte superior
-            x_inicial + ancho, alambresI->y, // parte inferior
+            x_inicial, alambresI->y,                  // parte superior
+            alambres->x + ancho, alambresI->y + alto + 20, // parte inferior
             5, 5,
             al_map_rgb(77, 19, 6)); // marrón
 
-        centroX += 120; // separa las torres
+        centroX += 305; // separa las torres
     }
 }
