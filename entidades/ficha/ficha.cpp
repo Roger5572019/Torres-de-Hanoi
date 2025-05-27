@@ -1,38 +1,70 @@
 #include <allegro5/allegro5.h>
+#include "alambre.hpp"
 #include "ficha.hpp"
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_primitives.h>
 
-void renderizarFichas(int num, float altura)
+void crearFichas(int num, float altura, Ficha *misFichas)
 {
-  Ficha fichas[num];
-  int ancho = 40;
+  int ancho = 40, count = 0;
   float alto = altura / num;
   float centroX = 100;
   float x_inicial;
 
   for (int i = 0; i < num; i++)
   {
-    Ficha *fichaI = &fichas[i];
-    fichaI->height = alto; 
+    Ficha *fichaI = &misFichas[i];
+    fichaI->height = alto;
     fichaI->width = ancho;
     fichaI->color = static_cast<Color>(i % 7); // Ciclador de colores
-    fichaI->numeroFicha = i + 1;
+    fichaI->numeroFicha = count;
+    fichaI->idPalo = 0;
+    count++;
     if (i == 0)
       fichaI->y = 100 + 20;
     else
-      fichaI->y = fichas[i - 1].y + alto;
-
+      fichaI->y = misFichas[i - 1].y + alto;
     x_inicial = centroX - (ancho / 2);
+    fichaI->x = x_inicial;
+    ancho += 20; // crecer cada ficha
+  }
+}
 
+void moverFicha(int num, Ficha *misFichas, Alambre *misAlambres, int idFicha, int idPalo)
+{
+  for (int i = 0; i < num; i++)
+  {
+    if (misFichas[i].numeroFicha == idFicha)
+    {
+      int paloAnterior = misFichas[i].idPalo;
+
+      for (int j = 0; j < 3; j++)
+      {
+        if (misAlambres[j].id == idPalo)
+        {
+          misAlambres[j].count++;
+          misFichas[i].x = misAlambres[j].x + (misAlambres[j].width / 2) - (misFichas[i].width / 2);
+          misFichas[i].y = (misAlambres[j].y + misAlambres[j].height + 20) - (misFichas[i].height * misAlambres[j].count);
+          misAlambres[paloAnterior].count--;
+          misFichas[i].idPalo = misAlambres[j].id;
+          break;
+        }
+      }
+    }
+  }
+}
+
+void renderizarFichas(Ficha *fichas, int tam)
+{
+  for (int i = 0; i < tam; i++)
+  {
+    Ficha *fichaI = &fichas[i];
     al_draw_filled_rounded_rectangle(
-        x_inicial, fichaI->y,
-        x_inicial + fichaI->width, fichaI->y + fichaI->height,
+        fichaI->x, fichaI->y,
+        fichaI->x + fichaI->width, fichaI->y + fichaI->height,
         10, 10,
         obtenerColor(fichaI->color));
-
-    ancho += 20; // crecer cada ficha
   }
 }
 

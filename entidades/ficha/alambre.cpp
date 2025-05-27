@@ -4,10 +4,9 @@
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_primitives.h>
 
-void renderizarAlambres(int num)
+void crearAlambres(int num, int fichas, Alambre *alambres)
 {
-    Alambre alambres[num];
-    int ancho = 10;
+    int ancho = 10, count = 0;
     int alto = 220;
     float centroX = 100;
     float x_inicial;
@@ -15,6 +14,15 @@ void renderizarAlambres(int num)
     for (int i = 0; i < num; i++)
     {
         Alambre *alambresI = &alambres[i];
+        if (i == 0)
+        {
+            alambresI->count = fichas;
+        }
+        else
+        {
+            alambresI->count = 0;
+        }
+
         alambresI->height = alto;
         alambresI->width = ancho;
 
@@ -23,14 +31,21 @@ void renderizarAlambres(int num)
 
         // Posición Y base
         alambresI->y = 100;
-        alambres->x = x_inicial;
-        // Dibuja el alambre (como torre)
+        alambresI->x = x_inicial;
+        alambresI->id = count;
+        count++;
+        centroX += 305; // separa las torres
+    }
+}
+
+void renderizarAlambres(int num, Alambre *alambresI)
+{
+    for (int i = 0; i < num; i++)
+    {
         al_draw_filled_rounded_rectangle(
-            x_inicial, alambresI->y,                  // parte superior
-            alambres->x + ancho, alambresI->y + alto + 20, // parte inferior
+            alambresI[i].x, alambresI[i].y,
+            alambresI[i].x + alambresI[i].width, alambresI[i].y + alambresI[i].height + 20,
             5, 5,
             al_map_rgb(77, 19, 6)); // marrón
-
-        centroX += 305; // separa las torres
     }
 }

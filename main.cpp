@@ -20,7 +20,7 @@ struct BOUNCER
 
 int main()
 {
-    int fichas = 0;
+    int numFichas = 0;
     // Inicializar librería principal de Allegro
     al_init();
     // Inicializar tecladoFichasFichas
@@ -42,6 +42,7 @@ int main()
     // Crear temporizador para controlar los FPS (30 FPS en este caso)
 
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / 60.0);
+    ALLEGRO_TIMER *timerMover = al_create_timer(1.0);
     // Cargar fuente
     ALLEGRO_FONT *font = al_load_font("fuentes\\arial.ttf", 24, 0);
     if (!font)
@@ -54,11 +55,13 @@ int main()
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
     al_register_event_source(queue, al_get_timer_event_source(timer));
+    al_register_event_source(queue, al_get_timer_event_source(timerMover));
 
     ALLEGRO_EVENT event;
     bool redraw = true;
     // Iniciar temporizador
     al_start_timer(timer);
+    al_start_timer(timerMover);
     // Inicializar objHolamunndo (Coordenadas y Velocidad)
     BOUNCER objHolaMundo;
     objHolaMundo.dx = 2;
@@ -68,7 +71,12 @@ int main()
     int w = al_get_text_width(font, "Hello world!");
     int h = al_get_font_line_height(font);
     cout << "Fichas: ";
-    cin >> fichas;
+    cin >> numFichas;
+    Ficha misFichas[numFichas];
+    Alambre misAlambres[3];
+    crearFichas(numFichas, 220, misFichas);
+    crearAlambres(3, numFichas, misAlambres);
+    int fichasVistas = numFichas;
     cin.ignore();
     cin.clear();
     while (1)
@@ -79,11 +87,22 @@ int main()
 
         // Si es un evento del temporizador, marcar para redibujar
         if (event.type == ALLEGRO_EVENT_TIMER)
+        {
             redraw = true;
-        // Si se presiona una tecla o se cierra la ventana, salir del bucle
-        else if ((event.type == ALLEGRO_EVENT_KEY_DOWN) || (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE))
-            break;
+        }
 
+        // Si se presiona una tecla o se cierra la ventana, salir del bucle
+        else if ((event.type == ALLEGRO_EVENT_KEY_DOWN))
+        {
+            if (fichasVistas >= 0)
+            {
+                moverFicha(numFichas, misFichas, misAlambres, fichasVistas, 1);
+                fichasVistas--;
+            }
+        }
+
+        else if ((event.type == ALLEGRO_EVENT_DISPLAY_CLOSE))
+            break;
         // Si se debe redibujar y no hay más eventos pendientes
         if (redraw && al_is_event_queue_empty(queue))
         {
@@ -117,10 +136,11 @@ int main()
             // Dibujar texto en color blanco con movimiento
             al_draw_text(font, al_map_rgb(255, 255, 255), b->x, b->y, 0, "Hello world!");
             // Dibujar Alambres
-            renderizarAlambres(3);
+            renderizarAlambres(3, misAlambres);
             // Dibujar Fichas
-            renderizarFichas(fichas, 220);
-            // Mostrar lo que se dibujó
+
+            renderizarFichas(misFichas, numFichas);
+
             al_flip_display();
 
             redraw = false;
@@ -131,6 +151,7 @@ int main()
     al_destroy_font(font);
     al_destroy_display(disp);
     al_destroy_timer(timer);
+    al_destroy_timer(timerMover);
     al_destroy_event_queue(queue);
 
     return 0;
