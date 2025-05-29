@@ -18,7 +18,7 @@ void crearFichas(int num, float altura, Ficha *misFichas)
     fichaI->height = alto;
     fichaI->width = ancho;
     fichaI->color = static_cast<Color>(i % 7); // Ciclador de colores
-    fichaI->numeroFicha = count;
+    fichaI->numeroFicha = count + 1;
     fichaI->idPalo = 0;
     count++;
     if (i == 0)

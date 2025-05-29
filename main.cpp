@@ -8,8 +8,12 @@
 
 using namespace std;
 
+void hanoi(int num, int origen, int destino, int auxiliar, Ficha *, Alambre *);
+
 int const SIZE_W = 800;
 int const SIZE_H = 800;
+Ficha misFichas;
+int numFichasGlobal = 0;
 
 struct BOUNCER
 {
@@ -20,7 +24,7 @@ struct BOUNCER
 
 int main()
 {
-    int numFichas = 0;
+
     // Inicializar librería principal de Allegro
     al_init();
     // Inicializar tecladoFichasFichas
@@ -71,12 +75,13 @@ int main()
     int w = al_get_text_width(font, "Hello world!");
     int h = al_get_font_line_height(font);
     cout << "Fichas: ";
-    cin >> numFichas;
-    Ficha misFichas[numFichas];
+    cin >> numFichasGlobal;
+    Ficha misFichas[numFichasGlobal];
     Alambre misAlambres[3];
-    crearFichas(numFichas, 220, misFichas);
-    crearAlambres(3, numFichas, misAlambres);
-    int fichasVistas = numFichas;
+    crearFichas(numFichasGlobal, 220, misFichas);
+    crearAlambres(3, numFichasGlobal, misAlambres);
+    int fichasVistas = numFichasGlobal;
+    bool terminado = false;
     cin.ignore();
     cin.clear();
     while (1)
@@ -94,10 +99,10 @@ int main()
         // Si se presiona una tecla o se cierra la ventana, salir del bucle
         else if ((event.type == ALLEGRO_EVENT_KEY_DOWN))
         {
-            if (fichasVistas >= 0)
+            if (!terminado)
             {
-                moverFicha(numFichas, misFichas, misAlambres, fichasVistas, 1);
-                fichasVistas--;
+                hanoi(fichasVistas, 0, 2, 1, misFichas, misAlambres);
+                terminado = true;
             }
         }
 
@@ -139,7 +144,7 @@ int main()
             renderizarAlambres(3, misAlambres);
             // Dibujar Fichas
 
-            renderizarFichas(misFichas, numFichas);
+            renderizarFichas(misFichas, numFichasGlobal);
 
             al_flip_display();
 
@@ -155,4 +160,34 @@ int main()
     al_destroy_event_queue(queue);
 
     return 0;
+}
+
+void hanoi(int num, int origen, int destino, int auxiliar, Ficha *misFichas, Alambre *misAlambres)
+{
+    if (num == 1)
+    {
+        cout << "Mueva el bloque " << num << " desde " << origen << " hasta " << destino << endl;
+        moverFicha(numFichasGlobal, misFichas, misAlambres, num, destino);
+
+        // Redibujar pantalla manualmente
+        al_clear_to_color(al_map_rgb(0, 0, 0));
+        renderizarAlambres(3, misAlambres);
+        renderizarFichas(misFichas, numFichasGlobal);
+        al_flip_display();
+
+        al_rest(1.0);
+    }
+    else
+    {
+        hanoi(num - 1, origen, auxiliar, destino, misFichas, misAlambres);
+        cout << "Mueva el bloque " << num << " desde " << origen << " hasta " << destino << endl;
+        moverFicha(numFichasGlobal, misFichas, misAlambres, num, destino);
+        // Redibujar pantalla manualmente
+        al_clear_to_color(al_map_rgb(0, 0, 0));
+        renderizarAlambres(3, misAlambres);
+        renderizarFichas(misFichas, numFichasGlobal);
+        al_flip_display();
+        al_rest(1.0);
+        hanoi(num - 1, auxiliar, destino, origen, misFichas, misAlambres);
+    }
 }
