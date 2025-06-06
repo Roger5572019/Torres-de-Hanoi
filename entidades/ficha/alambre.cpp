@@ -30,7 +30,7 @@ void crearAlambres(int num, int fichas, Alambre *alambres)
         x_inicial = centroX - (ancho / 2);
 
         // Posición Y base
-        alambresI->y = 100;
+        alambresI->y = 300;
         alambresI->x = x_inicial;
         alambresI->id = count;
         count++;

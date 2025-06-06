@@ -8,11 +8,14 @@ struct Ficha
     float width, height;
     int numeroFicha;
     int idPalo;
+    bool movArriba, movAbajo, movHorizontal;
     Color color;
 
 };
 
-void moverFicha(int num, Ficha *misFichas, Alambre *misAlambres, int idFicha, int idPalo);
+bool moverFicha(int num, Ficha *misFichas, Alambre *misAlambres, int idFicha, int idPalo, float vel);
 void renderizarFichas(Ficha* , int);
 void crearFichas(int num, float altura, Ficha *misFichas);
+void actualizarEstados(int num, Ficha *misFichas, Alambre *misAlambres, int idFicha, int idPalo);
+void reiniciarMovFichas(int num, Ficha *misFichas);
 ALLEGRO_COLOR obtenerColor(Color);
