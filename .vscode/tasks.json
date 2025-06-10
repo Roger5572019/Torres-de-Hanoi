@@ -10,8 +10,8 @@
 				 "-I", "${workspaceFolder}/entidades",
 				"-g",
 				"${workspaceFolder}/main.cpp",
-				"${workspaceFolder}/entidades/ficha/ficha.cpp",
-				"${workspaceFolder}/entidades/ficha/alambre.cpp",
+				"${workspaceFolder}/entidades/ficha.cpp",
+				"${workspaceFolder}/entidades/alambre.cpp",
 
 				"-o",
 				"${workspaceFolder}/app.exe",
