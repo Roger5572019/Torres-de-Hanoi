@@ -10,21 +10,20 @@ using namespace std;
 
 void hanoi(int num, int origen, int destino, int auxiliar, Ficha *misFichas, Alambre *misAlambres, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT *font);
 void gestionar_pausa_y_eventos(Ficha *misFichas, Alambre *misAlambres, int numFichas, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT *font);
+int leerNumFichasFile();
 
 int const SIZE_W = 800;
 int const SIZE_H = 800;
-float vel = 20.0f;
-// Inicializar cola de eventos
-Ficha misFichas;
+
 int numFichasGlobal = 0;
-bool pausa = false;
+float vel = 20.0f;
+Ficha misFichas;
+
+bool usoDeFile = false;
 bool terminado = false;
-struct BOUNCER
-{
-    float x, y;
-    float dx, dy;
-    int type;
-};
+bool pausa = false;
+
+FILE *prtFileUltimo;
 
 int main()
 {
@@ -50,7 +49,6 @@ int main()
     // Crear temporizador para controlar los FPS (30 FPS en este caso)
 
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / 60.0);
-    ALLEGRO_TIMER *timerMover = al_create_timer(1.0);
     // Cargar fuente
 
     if (!font)
@@ -63,31 +61,79 @@ int main()
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
     al_register_event_source(queue, al_get_timer_event_source(timer));
-    al_register_event_source(queue, al_get_timer_event_source(timerMover));
-
     ALLEGRO_EVENT event;
     bool redraw = true;
     // Iniciar temporizador
     al_start_timer(timer);
-    al_start_timer(timerMover);
-    // Inicializar objHolamunndo (Coordenadas y Velocidad)
-    BOUNCER objHolaMundo;
-    objHolaMundo.dx = 2;
-    objHolaMundo.dy = 2;
-    objHolaMundo.x = 0;
-    objHolaMundo.y = 0;
-    int w = al_get_text_width(font, "Hello world!");
-    int h = al_get_font_line_height(font);
     cout << "Fichas: ";
     cin >> numFichasGlobal;
-    Ficha misFichas[numFichasGlobal];
+    Ficha *misFichas = new Ficha[numFichasGlobal];
     Alambre misAlambres[3];
+    do
+    {
+        cout << "Ingresa la velocidad: ";
+        cin >> vel;
+
+    } while (vel <= 0 || vel > 50);
+
     crearFichas(numFichasGlobal, 220, misFichas);
     crearAlambres(3, numFichasGlobal, misAlambres);
     int fichasVistas = numFichasGlobal;
     bool finHanoi = false;
     cin.ignore();
     cin.clear();
+
+    cout << "Numero del archivo: " << leerNumFichasFile();
+
+    if (numFichasGlobal != leerNumFichasFile())
+    {
+        prtFileUltimo = fopen("resultados.txt", "w");
+
+        if (!prtFileUltimo)
+        {
+            cout << "Error File";
+            return -1;
+        }
+        fprintf(prtFileUltimo, "%d\n", numFichasGlobal);
+    }
+    else
+    {
+        char opcion = ' ';
+        do
+        {
+
+            cout << "Se detecto que el archivo es compatible para tu numero de fichas" << endl;
+            cout << "Quieres usarlo? (s/n)" << endl;
+            cin >> opcion;
+            switch (opcion)
+            {
+            case 's':
+                usoDeFile = true;
+                prtFileUltimo = fopen("resultados.txt", "r");
+                if (!prtFileUltimo)
+                {
+                    cout << "Error File";
+                    return -1;
+                }
+                break;
+            case 'n':
+                usoDeFile = false;
+                prtFileUltimo = fopen("resultados.txt", "w");
+                if (!prtFileUltimo)
+                {
+                    cout << "Error File";
+                    return -1;
+                }
+                fprintf(prtFileUltimo, "%d\n", numFichasGlobal);
+                break;
+            default:
+                cout << "opcion invalida, intente de nuevo";
+                break;
+            }
+        } while (opcion != 's' && opcion != 'n');
+    }
+    int idFichaFile;
+    int idPaloFile;
     while (!terminado)
     {
 
@@ -103,10 +149,48 @@ int main()
         // Si se presiona una tecla o se cierra la ventana, salir del bucle
         else if ((event.type == ALLEGRO_EVENT_KEY_DOWN))
         {
-            if (!finHanoi)
+            if (!usoDeFile)
             {
-                hanoi(fichasVistas, 0, 2, 1, misFichas, misAlambres, queue, font);
-                finHanoi = true;
+                if (!finHanoi)
+                {
+                    hanoi(fichasVistas, 0, 2, 1, misFichas, misAlambres, queue, font);
+                    finHanoi = true;
+                }
+            }
+            else
+            {
+                if (!finHanoi)
+                {
+                    rewind(prtFileUltimo);
+                    fscanf(prtFileUltimo, "%*d\n");
+
+                    while (!feof(prtFileUltimo))
+                    {
+                        if (terminado)
+                            break;
+                        fscanf(prtFileUltimo, "%d\t%d\n", &idFichaFile, &idPaloFile);
+                        actualizarEstados(numFichasGlobal, misFichas, misAlambres, idFichaFile, idPaloFile);
+                        reiniciarMovFichas(idFichaFile, misFichas);
+                        int fichaMovida;
+                        do
+                        {
+                            fichaMovida = false;
+                            if (terminado)
+                                break;
+                            gestionar_pausa_y_eventos(misFichas, misAlambres, numFichasGlobal, queue, font);
+                            fichaMovida = moverFicha(numFichasGlobal, misFichas, misAlambres, idFichaFile, idPaloFile, vel);
+                            // Redibujar la pantalla para mostrar el movimiento realizado
+                            al_clear_to_color(al_map_rgb(0, 0, 0));
+                            renderizarAlambres(3, misAlambres);
+                            renderizarFichas(misFichas, numFichasGlobal);
+                            al_flip_display();
+
+                            // La pausa de 1 segundo para poder ver el resultado
+                            al_rest(1.0 / 120.0);
+                        } while (!fichaMovida);
+                    }
+                    finHanoi = true;
+                }
             }
         }
 
@@ -121,41 +205,11 @@ int main()
         {
             // Limpiar pantalla a color negro
             al_clear_to_color(al_map_rgb(0, 0, 0));
-            // Mover x,y de HolaMundo
-            BOUNCER *b = &objHolaMundo; // ptr para objHolaMundo
-            b->x += b->dx;
-            b->y += b->dy;
-
-            if (b->x < 0)
-            {
-                b->x *= -1;
-                b->dx *= -1;
-            }
-            if (b->x > SIZE_W - w)
-            {
-                b->x = SIZE_W - w;
-                b->dx *= -1;
-            }
-            if (b->y < 0)
-            {
-                b->y = 0;
-                b->dy *= -1;
-            }
-            if (b->y > SIZE_H - h)
-            {
-                b->y = SIZE_H - h;
-                b->dy *= -1;
-            }
-            // Dibujar texto en color blanco con movimiento
-            al_draw_text(font, al_map_rgb(255, 255, 255), b->x, b->y, 0, "Hello world!");
             // Dibujar Alambres
             renderizarAlambres(3, misAlambres);
             // Dibujar Fichas
-
             renderizarFichas(misFichas, numFichasGlobal);
-
             al_flip_display();
-
             redraw = false;
         }
     }
@@ -164,9 +218,9 @@ int main()
     al_destroy_font(font);
     al_destroy_display(disp);
     al_destroy_timer(timer);
-    al_destroy_timer(timerMover);
     al_destroy_event_queue(queue);
-
+    delete (misFichas);
+    fclose(prtFileUltimo);
     return 0;
 }
 
@@ -188,7 +242,10 @@ void gestionar_pausa_y_eventos(Ficha *misFichas, Alambre *misAlambres, int numFi
             }
             if (event.keyboard.keycode == ALLEGRO_KEY_LEFT)
             {
-                vel = vel - 0.5f;
+                if (vel > 0)
+                {
+                    vel = vel - 0.5f;
+                }
             }
             else if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
             {
@@ -241,6 +298,7 @@ void hanoi(int num, int origen, int destino, int auxiliar, Ficha *misFichas, Ala
     if (num == 1)
     {
         cout << "Mueva el bloque " << num << " desde " << origen << " hasta " << destino << endl;
+        fprintf(prtFileUltimo, "%d\t%d\n", num, destino);
         actualizarEstados(numFichasGlobal, misFichas, misAlambres, num, destino);
         reiniciarMovFichas(num, misFichas);
         do
@@ -265,6 +323,7 @@ void hanoi(int num, int origen, int destino, int auxiliar, Ficha *misFichas, Ala
         hanoi(num - 1, origen, auxiliar, destino, misFichas, misAlambres, event_queue, font);
 
         cout << "Mueva el bloque " << num << " desde " << origen << " hasta " << destino << endl;
+        fprintf(prtFileUltimo, "%d\t%d\n", num, destino);
         actualizarEstados(numFichasGlobal, misFichas, misAlambres, num, destino);
         reiniciarMovFichas(num, misFichas);
         do
@@ -285,4 +344,18 @@ void hanoi(int num, int origen, int destino, int auxiliar, Ficha *misFichas, Ala
 
         hanoi(num - 1, auxiliar, destino, origen, misFichas, misAlambres, event_queue, font);
     }
+}
+
+int leerNumFichasFile()
+{
+    FILE *primerLinea = fopen("resultados.txt", "r");
+    if (!primerLinea)
+    {
+        cout << "No se encontro el archivo, Error";
+        return -1;
+    }
+    int numFichas = 0;
+    fscanf(primerLinea, "%d\n", &numFichas);
+    fclose(primerLinea);
+    return numFichas;
 }
