@@ -186,16 +186,16 @@ int main()
         if (redraw && al_is_event_queue_empty(queue))
         {
 
-            al_clear_to_color(al_map_rgb(0, 0, 0));
+            al_clear_to_color(al_map_rgb(178, 178, 178));
             if (!iniHanoi)
             {
-                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 600, ALLEGRO_ALIGN_CENTER, "Presiona 'E' para Empezar");
-                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 650, ALLEGRO_ALIGN_CENTER, "Presiona 'ESC' para Salir");
+                al_draw_text(font, al_map_rgb(0, 0, 0), 400, 600, ALLEGRO_ALIGN_CENTER, "Presiona 'E' para Empezar");
+                al_draw_text(font, al_map_rgb(0, 0, 0), 400, 650, ALLEGRO_ALIGN_CENTER, "Presiona 'ESC' para Salir");
             }
             if (finHanoi)
             {
-                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 600, ALLEGRO_ALIGN_CENTER, "Presiona 'R' para Reiniciar");
-                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 650, ALLEGRO_ALIGN_CENTER, "Presiona 'ESC' para Salir");
+                al_draw_text(font, al_map_rgb(0, 0, 0), 400, 600, ALLEGRO_ALIGN_CENTER, "Presiona 'R' para Reiniciar");
+                al_draw_text(font, al_map_rgb(0, 0, 0), 400, 650, ALLEGRO_ALIGN_CENTER, "Presiona 'ESC' para Salir");
             }
             renderizarAlambres(3, misAlambres);
             renderizarFichas(misFichas, numFichasGlobal);
@@ -252,10 +252,10 @@ void gestionar_pausa_y_eventos(Ficha *misFichas, Alambre *misAlambres, int numFi
     while (pausa && !terminado)
     {
 
-        al_clear_to_color(al_map_rgb(0, 0, 0));
+        al_clear_to_color(al_map_rgb(178, 178, 178));
         renderizarAlambres(3, misAlambres);
         renderizarFichas(misFichas, numFichas);
-        al_draw_text(font, al_map_rgb(255, 255, 255), 400, 650, ALLEGRO_ALIGN_CENTER, "PAUSA (Presiona 'P' para continuar)");
+        al_draw_text(font, al_map_rgb(0, 0, 0), 400, 650, ALLEGRO_ALIGN_CENTER, "PAUSA (Presiona 'P' para continuar)");
         al_flip_display();
 
         al_wait_for_event(event_queue, &event);
@@ -277,38 +277,38 @@ void gestionar_pausa_y_eventos(Ficha *misFichas, Alambre *misAlambres, int numFi
     }
 }
 
-void hanoi(int num, int origen, int destino, int auxiliar, Ficha *misFichas, Alambre *misAlambres, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT *font, bool reiniciado)
-{
-    if (terminado)
-        return;
-
-    if (num == 1)
+    void hanoi(int num, int origen, int destino, int auxiliar, Ficha *misFichas, Alambre *misAlambres, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT *font, bool reiniciado)
     {
-        cout << "Mueva el bloque " << num << " desde " << origen << " hasta " << destino << endl;
-        if (!reiniciado)
-            fprintf(prtFileUltimo, "%d\t%d\n", num, destino);
-
-        actualizarEstados(numFichasGlobal, misFichas, misAlambres, num, destino);
-        reiniciarMovFichas(num, misFichas);
-        animarMovimientoFicha(num, destino, misFichas, misAlambres, event_queue, font);
-    }
-    else
-    {
-        hanoi(num - 1, origen, auxiliar, destino, misFichas, misAlambres, event_queue, font, reiniciado);
         if (terminado)
             return;
-        cout << "Mueva el bloque " << num << " desde " << origen << " hasta " << destino << endl;
-        if (!reiniciado)
-            fprintf(prtFileUltimo, "%d\t%d\n", num, destino);
 
-        actualizarEstados(numFichasGlobal, misFichas, misAlambres, num, destino);
-        reiniciarMovFichas(num, misFichas);
+        if (num == 1)
+        {
+            cout << "Mueva el bloque " << num << " desde " << origen << " hasta " << destino << endl;
+            if (!reiniciado)
+                fprintf(prtFileUltimo, "%d\t%d\n", num, destino);
 
-        animarMovimientoFicha(num, destino, misFichas, misAlambres, event_queue, font);
+            actualizarEstados(numFichasGlobal, misFichas, misAlambres, num, destino);
+            reiniciarMovFichas(num, misFichas);
+            animarMovimientoFicha(num, destino, misFichas, misAlambres, event_queue, font);
+        }
+        else
+        {
+            hanoi(num - 1, origen, auxiliar, destino, misFichas, misAlambres, event_queue, font, reiniciado);
+            if (terminado)
+                return;
+            cout << "Mueva el bloque " << num << " desde " << origen << " hasta " << destino << endl;
+            if (!reiniciado)
+                fprintf(prtFileUltimo, "%d\t%d\n", num, destino);
 
-        hanoi(num - 1, auxiliar, destino, origen, misFichas, misAlambres, event_queue, font, reiniciado);
+            actualizarEstados(numFichasGlobal, misFichas, misAlambres, num, destino);
+            reiniciarMovFichas(num, misFichas);
+
+            animarMovimientoFicha(num, destino, misFichas, misAlambres, event_queue, font);
+
+            hanoi(num - 1, auxiliar, destino, origen, misFichas, misAlambres, event_queue, font, reiniciado);
+        }
     }
-}
 
 int leerNumFichasFile()
 {
@@ -340,9 +340,9 @@ void animarMovimientoFicha(int idFicha, int paloDestino, Ficha *fichas, Alambre 
         fichaMovida = moverFicha(numFichasGlobal, fichas, alambres, idFicha, paloDestino, vel);
 
         // Dibuja el estado actual de la escena
-        al_clear_to_color(al_map_rgb(0, 0, 0));
-        al_draw_text(font, al_map_rgb(255, 255, 255), 400, 600, ALLEGRO_ALIGN_CENTER, "Aumenta o Disminuye Velocidad con < >");
-        al_draw_text(font, al_map_rgb(255, 255, 255), 400, 650, ALLEGRO_ALIGN_CENTER, "Presiona 'P' para pausar");
+        al_clear_to_color(al_map_rgb(178, 178, 178));
+        al_draw_text(font, al_map_rgb(0, 0, 0), 400, 600, ALLEGRO_ALIGN_CENTER, "Aumenta o Disminuye Velocidad con < >");
+        al_draw_text(font, al_map_rgb(0, 0, 0), 400, 650, ALLEGRO_ALIGN_CENTER, "Presiona 'P' para pausar");
         renderizarAlambres(3, alambres);
         renderizarFichas(fichas, numFichasGlobal);
         al_flip_display();
@@ -371,54 +371,54 @@ void configurarPartida(float &velocidad, Ficha *&fichas, Alambre *alambres)
     crearAlambres(3, numFichasGlobal, alambres);
 }
 
-FILE *gestionarArchivoResultados(int numFichas, bool &usarArchivo)
-{
-    FILE *archivo = nullptr;
-    int fichasEnArchivo = leerNumFichasFile();
-    cout << "Numero de fichas en archivo previo: " << fichasEnArchivo << endl;
-
-    if (numFichas != fichasEnArchivo)
+    FILE *gestionarArchivoResultados(int numFichas, bool &usarArchivo)
     {
-        cout << "El numero de fichas es diferente. Creando nuevo archivo de resultados..." << endl;
-        archivo = fopen("resultadosTmp.txt", "w");
-        if (archivo)
+        FILE *archivo = nullptr;
+        int fichasEnArchivo = leerNumFichasFile();
+        cout << "Numero de fichas en archivo previo: " << fichasEnArchivo << endl;
+
+        if (numFichas != fichasEnArchivo)
         {
-            fprintf(archivo, "%d\n", numFichas);
+            cout << "El numero de fichas es diferente. Creando nuevo archivo de resultados..." << endl;
+            archivo = fopen("resultadosTmp.txt", "w");
+            if (archivo)
+            {
+                fprintf(archivo, "%d\n", numFichas);
+            }
         }
-    }
-    else
-    {
-        char opcion = ' ';
-        do
+        else
         {
-            cout << "Se detecto un archivo compatible. Quieres usarlo para ver la solucion? (s/n)" << endl;
-            cin >> opcion;
+            char opcion = ' ';
+            do
+            {
+                cout << "Se detecto un archivo compatible. Quieres usarlo para ver la solucion? (s/n)" << endl;
+                cin >> opcion;
 
-            if (opcion == 's')
-            {
-                usarArchivo = true;
-                archivo = fopen("resultados.txt", "r");
-            }
-            else if (opcion == 'n')
-            {
-                usarArchivo = false;
-                archivo = fopen("resultadosTmp.txt", "w");
-                if (archivo)
+                if (opcion == 's')
                 {
-                    fprintf(archivo, "%d\n", numFichas);
+                    usarArchivo = true;
+                    archivo = fopen("resultados.txt", "r");
                 }
-            }
-            else
-            {
-                cout << "Opcion invalida, intente de nuevo." << endl;
-            }
-        } while (opcion != 's' && opcion != 'n');
-    }
+                else if (opcion == 'n')
+                {
+                    usarArchivo = false;
+                    archivo = fopen("resultadosTmp.txt", "w");
+                    if (archivo)
+                    {
+                        fprintf(archivo, "%d\n", numFichas);
+                    }
+                }
+                else
+                {
+                    cout << "Opcion invalida, intente de nuevo." << endl;
+                }
+            } while (opcion != 's' && opcion != 'n');
+        }
 
-    if (!archivo)
-    {
-        cout << "Error: No se pudo abrir el archivo de resultados." << endl;
-    }
+        if (!archivo)
+        {
+            cout << "Error: No se pudo abrir el archivo de resultados." << endl;
+        }
 
-    return archivo;
-}
+        return archivo;
+    }

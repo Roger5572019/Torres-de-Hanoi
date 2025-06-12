@@ -46,6 +46,6 @@ void renderizarAlambres(int num, Alambre *alambresI)
             alambresI[i].x, alambresI[i].y,
             alambresI[i].x + alambresI[i].width, alambresI[i].y + alambresI[i].height + 20,
             5, 5,
-            al_map_rgb(77, 19, 6)); // marrón
+            al_map_rgb(0, 0, 0)); // marrón
     }
 }
